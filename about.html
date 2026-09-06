@@ -15,7 +15,7 @@
                 <span id="nametext">Inside</span>
             </div>
 
-            <ul>
+            <ul class="desktop-nav">
                 <li class="buttons"><a href="index.html">Main</a></li>
                 <li class="buttons"><a href="about.html">About Us</a></li>
                 <li class="buttons"><a href="tel:+995577629918">Contact Us</a></li>
@@ -39,8 +39,40 @@
                     </div>
                 </li>
             </ul>
+
+            <button class="menu-toggle-btn" onclick="toggleMobileMenu()" aria-label="Open menu">
+        <span></span><span></span><span></span>
+    </button>
+
         </nav>
     </header>
+
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+<div class="mobile-menu-drawer" id="mobile-menu-drawer">
+    <div class="mobile-menu-header">
+        <span>Menu</span>
+        <span class="close-mobile-menu" onclick="toggleMobileMenu()">&times;</span>
+    </div>
+
+    <ul class="mobile-menu-list">
+        <li><a href="index.html" onclick="toggleMobileMenu()">Main</a></li>
+        <li><a href="about.html" onclick="toggleMobileMenu()">About Us</a></li>
+        <li><a href="tel:+995577629918" onclick="toggleMobileMenu()">Contact Us</a></li>
+    </ul>
+
+    <div class="mobile-lang-switch">
+        <a href="about.html" class="lang-item">
+            <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag" class="flag-icon"><span>EN</span>
+        </a>
+        <a href="about-ka.html" class="lang-item">
+            <img src="https://flagcdn.com/w40/ge.png" alt="Georgian Flag" class="flag-icon"><span>GE</span>
+        </a>
+        <a href="about-ru.html" class="lang-item">
+            <img src="https://flagcdn.com/w40/ru.png" alt="Russian Flag" class="flag-icon"><span>RU</span>
+        </a>
+    </div>
+</div>
 
     <!-- HERO -->
     <section class="about-hero">
@@ -137,6 +169,14 @@
             </div>
         </div>
     </section>
+
+    <script>
+function toggleMobileMenu() {
+    document.getElementById('mobile-menu-drawer').classList.toggle('active');
+    document.getElementById('mobile-menu-overlay').classList.toggle('active');
+    document.body.style.overflow = document.getElementById('mobile-menu-drawer').classList.contains('active') ? 'hidden' : '';
+}
+</script>
 
 </body>
 </html>
