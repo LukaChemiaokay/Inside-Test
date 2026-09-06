@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,9 +16,9 @@
             </div>
 
             <ul>
-                <li class="buttons"><a href="index.html">Main</a></li>
-                <li class="buttons"><a href="about.html">About Us</a></li>
-                <li class="buttons"><a href="tel:+995577629918">Contact Us</a></li>
+                <li class="buttons"><a href="ru.html">Главная</a></li>
+                <li class="buttons"><a href="about-ru.html">О нас</a></li>
+                <li class="buttons"><a href="tel:+995577629918">Связаться</a></li>
             
                 <li class="buttons dropdown">
 
@@ -66,30 +66,29 @@
     </div>
 
     <section class="category-section">
-    <h2 class="section-title">Categories</h2>
-    <!-- კატეგორიების ბარათები დინამიურად ჩაჯდება აქ -->
+    <h2 class="section-title">Категории</h2>
+    <!-- Карточки категорий будут добавлены динамически -->
     <div class="category-grid" id="category-grid-container"></div>
 </section>
 
-<!-- კატეგორიების შიდა მენიუები დინამიურად ჩაჯდება აქ -->
+<!-- Подменю категорий будут добавлены динамически -->
 <div id="sub-menus-container"></div>
 
-<!-- Toast შეტყობინებების კონტეინერი -->
+<!-- Контейнер для всплывающих уведомлений -->
 <div id="toast-container" aria-live="polite"></div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyv4caJY1WuunU3dArRi18PSy5DQH1v4k5RDMQ1QA6norBba5cD_3DzLkHIV_A8CN5B/exec";
 
-// ამ ფაილის ენა — განსაზღვრავს, Google Sheets-ის რომელ სვეტებს წაიკითხავს
-// (name_en, description_en, category_en). ka.html-ში "ka", ru.html-ში "ru".
-const LANG = "en";
+// Язык этого файла — определяет, какие столбцы Google Sheets будут использоваться
+// (name_ru, description_ru, category_ru). В index.html — "en", в ka.html — "ka".
+const LANG = "ru";
 
 async function loadMenuFromGoogleSheets() {
     try {
         const response = await fetch(APPS_SCRIPT_URL);
         const data = await response.json();
 
-        // 1. მონაცემების დაჯგუფება კატეგორიების მიხედვით
         const categories = {};
         data.forEach(item => {
             if (!categories[item.category]) {
@@ -104,15 +103,13 @@ async function loadMenuFromGoogleSheets() {
         categoryGrid.innerHTML = '';
         subMenusContainer.innerHTML = '';
 
-        // 2. კატეგორიებისა და კერძების დინამიური აგება
         Object.keys(categories).forEach(catName => {
             const menuId = `${catName.toLowerCase().replace(/\s+/g, '-')}-menu`;
             const firstItem = categories[catName][0];
 
-            // კატეგორიის სახელი ამ ენაზე (category_en სვეტიდან), თუ ცარიელია — უცვლელი catName
+            // Название категории на этом языке (столбец category_ru), иначе — исходное catName
             const catLabel = firstItem[`category_${LANG}`] || catName;
 
-            // კატეგორიის მთავარი ბარათი
             categoryGrid.innerHTML += `
                 <div class="category-card" onclick="toggleMenu('${menuId}')">
                     <div class="category-image">
@@ -122,23 +119,19 @@ async function loadMenuFromGoogleSheets() {
                 </div>
             `;
 
-            // ქვემენიუს შიგთავსი კერძების ფოტოებით
             let itemsHtml = '';
             categories[catName].forEach(item => {
-    // კერძის სახელი/აღწერა ამ ენაზე (name_en / description_en), თუ ცარიელია — საბაზისო სვეტი
+    // Название/описание блюда на этом языке (name_ru / description_ru), иначе — базовый столбец
     const itemName = item[`name_${LANG}`] || item.name;
     const itemDesc = item[`description_${LANG}`] || item.description || '';
 
-    // კერძის ფოტოს HTML (თუ Google Sheets-ში შევსებულია item_image)
     const itemImgHtml = item.item_image 
         ? `<div class="item-image"><img src="${item.item_image}" alt="${itemName}"></div>` 
         : '';
 
-    // კერძის/სასმელის სახელიდან და ფასიდან ბრჭყალების შეცდომების თავიდან ასაცილებლად
     const safeName = itemName.replace(/'/g, "\\'");
 
     if (item.price_bottle && item.price_bottle > 0) {
-        // ღვინის ან ბოთლით/ჭიქით გაყიდვადი სასმელის ბლოკი
         itemsHtml += `
             <div class="menu-item">
                 ${itemImgHtml}
@@ -148,13 +141,12 @@ async function loadMenuFromGoogleSheets() {
                 </div>
                 <div class="item-price-action">
                     <span id="price-${item.id}">${item.price_glass} GEL</span>
-                    <button onclick="toggleWinePrice('${item.id}', ${item.price_glass}, ${item.price_bottle})">Bottle</button>
+                    <button onclick="toggleWinePrice('${item.id}', ${item.price_glass}, ${item.price_bottle})">Бутылка</button>
                     <button class="add-to-cart-btn" onclick="addToCart('${safeName}', ${item.price_glass})"> + </button>
                 </div>
             </div>
         `;
     } else {
-        // სტანდარტული კერძის ბლოკი
         itemsHtml += `
             <div class="menu-item">
                 ${itemImgHtml}
@@ -164,7 +156,7 @@ async function loadMenuFromGoogleSheets() {
                 </div>
                 <div class="item-price-action">
                     <span>${item.price_glass} GEL</span>
-                    <button class="add-to-cart-btn" onclick="addToCart('${safeName}', ${item.price_glass})"> + Add</button>
+                    <button class="add-to-cart-btn" onclick="addToCart('${safeName}', ${item.price_glass})"> + Добавить</button>
                 </div>
             </div>
         `;
@@ -181,14 +173,13 @@ async function loadMenuFromGoogleSheets() {
         });
 
     } catch (error) {
-        console.error("შეცდომა მენიუს ჩატვირთვისას:", error);
-        showToast("Failed to load the menu. Please refresh the page.", "error");
+        console.error("Ошибка загрузки меню:", error);
+        showToast("Не удалось загрузить меню. Обновите страницу.", "error");
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadMenuFromGoogleSheets);
 
-// შენი არსებული ინტერაქციის ფუნქციები (უცვლელი)
 function toggleMenu(menuId) {
     document.querySelectorAll('.sub-menu-container').forEach(menu => {
         if(menu.id !== menuId) menu.classList.remove('active');
@@ -211,22 +202,20 @@ function toggleWinePrice(wineId, glassPrice, bottlePrice) {
 
     if (priceSpan.innerText.includes(glassPrice)) {
         priceSpan.innerText = `${bottlePrice} GEL`;
-        btn.innerText = "Glass";
+        btn.innerText = "Бокал";
         btn.classList.add('bottle-active');
     } else {
         priceSpan.innerText = `${glassPrice} GEL`;
-        btn.innerText = "Bottle";
+        btn.innerText = "Бутылка";
         btn.classList.remove('bottle-active');
     }
 }
 
 let cart = [];
 
-// 1. მაგიდის ნომრის ამოღება URL-იდან (მაგ: site.com/?table=3)
 const urlParams = new URLSearchParams(window.location.search);
 const tableNumber = urlParams.get('table') || 'Unknown';
 
-// 2. კერძის კალათაში დამატება
 function addToCart(name, price) {
     const existingItem = cart.find(item => item.name === name);
     if (existingItem) {
@@ -235,10 +224,9 @@ function addToCart(name, price) {
         cart.push({ name, price, quantity: 1 });
     }
     updateCartUI();
-    showToast(`${name} added to cart`, "success", 1800);
+    showToast(`${name} добавлено в корзину`, "success", 1800);
 }
 
-// 3. კალათის ვიზუალის განახლება
 function updateCartUI() {
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -271,13 +259,9 @@ function toggleCartModal() {
     modal.classList.toggle('active');
 }
 
-// ==========================================================================
-// TOAST NOTIFICATIONS — alert()-ის ლამაზი ჩანაცვლება
-// ==========================================================================
 function showToast(message, type = "success", duration = 3200) {
     const container = document.getElementById('toast-container');
     if (!container) {
-        // fallback, თუ კონტეინერი რატომღაც არ არსებობს
         console.log(message);
         return;
     }
@@ -297,10 +281,8 @@ function showToast(message, type = "success", duration = 3200) {
 
     container.appendChild(toast);
 
-    // ანიმაციით გამოჩენა
     requestAnimationFrame(() => toast.classList.add('toast-show'));
 
-    // ავტომატური გაქრობა
     setTimeout(() => {
         toast.classList.remove('toast-show');
         toast.classList.add('toast-hide');
@@ -308,17 +290,14 @@ function showToast(message, type = "success", duration = 3200) {
     }, duration);
 }
 
-// ==========================================================================
-// ღილაკების ქულდაუნი (Cooldown) — სპამის თავიდან ასაცილებლად
-// ==========================================================================
-const WAITER_COOLDOWN_SECONDS = 60;   // ოფიციანტის გამოძახების ინტერვალი
-const ORDER_COOLDOWN_SECONDS = 20;    // შეკვეთის გაგზავნის ინტერვალი
+const WAITER_COOLDOWN_SECONDS = 60;
+const ORDER_COOLDOWN_SECONDS = 20;
 
 function startButtonCooldown(button, seconds, originalLabel) {
     let remaining = seconds;
     button.disabled = true;
     button.classList.add('cooldown-active');
-    button.innerText = `⏳ ${remaining}s`;
+    button.innerText = `⏳ ${remaining}с`;
 
     const interval = setInterval(() => {
         remaining -= 1;
@@ -328,33 +307,29 @@ function startButtonCooldown(button, seconds, originalLabel) {
             button.classList.remove('cooldown-active');
             button.innerText = originalLabel;
         } else {
-            button.innerText = `⏳ ${remaining}s`;
+            button.innerText = `⏳ ${remaining}с`;
         }
     }, 1000);
 }
 
-// 1. პარამეტრების კონფიგურაცია
 const TELEGRAM_BOT_TOKEN = "8936124869:AAHOUat_DBejKWz8_iPCfJ5HnZrae-pidx0";
 const TELEGRAM_CHAT_ID = "6724312303";
 
-// რესტორნის Wi-Fi-ს საჯარო IP მისამართი (ან რამდენიმე IP, თუ რამდენიმე პროვაიდერია)
 const RESTAURANT_WIFI_IPS = [
-    "212.58.114.202" // ჩაწერე შენი რესტორნის რეალური IP მისამართი
+    "212.58.114.202"
 ];
 
-// მომხმარებლის მიმდინარე IP-ს გასაგებად
 async function getUserIP() {
     try {
         const response = await fetch("https://api.ipify.org?format=json");
         const data = await response.json();
         return data.ip;
     } catch (error) {
-        console.error("IP-ს დადგენა ვერ მოხერხდა:", error);
+        console.error("Не удалось определить IP:", error);
         return null;
     }
 }
 
-// შემოწმება: არის თუ არა მომხმარებელი რესტორნის Wi-Fi-ზე?
 async function isUserOnRestaurantWifi() {
     const userIP = await getUserIP();
     console.log("User IP:", userIP);
@@ -363,7 +338,6 @@ async function isUserOnRestaurantWifi() {
     return RESTAURANT_WIFI_IPS.includes(userIP);
 }
 
-// 2. ოფიციანტის გამოძახება (IP შემოწმებით + ქულდაუნით + toast-შეტყობინებით)
 async function callWaiter() {
     const btn = document.querySelector('.call-waiter-btn');
     if (btn && btn.disabled) return;
@@ -371,11 +345,11 @@ async function callWaiter() {
     const isOnWifi = await isUserOnRestaurantWifi();
 
     if (!isOnWifi) {
-        showToast("Calling the waiter is only available on the restaurant Wi-Fi network", "warning");
+        showToast("Вызов официанта возможен только при подключении к Wi-Fi ресторана", "warning");
         return;
     }
 
-    const message = `🔔 *ოფიციანტის გამოძახება!*\n📍 *მაგიდა:* №${tableNumber}`;
+    const message = `🔔 *Вызов официанта!*\n📍 *Столик:* №${tableNumber}`;
 
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -389,37 +363,36 @@ async function callWaiter() {
         });
 
         if (res.ok) {
-            showToast(`Waiter has been called to table No. ${tableNumber}`, "success");
-            if (btn) startButtonCooldown(btn, WAITER_COOLDOWN_SECONDS, "🔔 Call Waiter");
+            showToast(`Официант вызван к столику №${tableNumber}`, "success");
+            if (btn) startButtonCooldown(btn, WAITER_COOLDOWN_SECONDS, "🔔 Позвать официанта");
         } else {
-            showToast("Something went wrong. Please try again.", "error");
+            showToast("Ошибка при вызове. Попробуйте снова.", "error");
         }
     } catch (e) {
-        showToast("Connection error! Please check your internet.", "error");
+        showToast("Ошибка соединения! Проверьте интернет.", "error");
     }
 }
 
-// 3. შეკვეთის გაგზავნა (IP შემოწმებით + ქულდაუნით + toast-შეტყობინებით)
 async function sendOrder() {
     const btn = document.querySelector('.send-order-btn');
     if (btn && btn.disabled) return;
 
     if (cart.length === 0) {
-        showToast("Your cart is empty!", "warning");
+        showToast("Корзина пуста!", "warning");
         return;
     }
 
     const isOnWifi = await isUserOnRestaurantWifi();
 
     if (!isOnWifi) {
-        showToast("Sending an order is only available on the restaurant Wi-Fi network", "warning");
+        showToast("Отправка заказа возможна только при подключении к Wi-Fi ресторана", "warning");
         return;
     }
 
     let itemsText = cart.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} GEL`).join('\n');
     let total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
     
-    const message = `🍽️ *ახალი შეკვეთა!*\n📍 *მაგიდა:* №${tableNumber}\n\n*კერძები:*\n${itemsText}\n\n💰 *სულ:* ${total} GEL`;
+    const message = `🍽️ *Новый заказ!*\n📍 *Столик:* №${tableNumber}\n\n*Блюда:*\n${itemsText}\n\n💰 *Итого:* ${total} GEL`;
 
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -433,44 +406,44 @@ async function sendOrder() {
         });
 
         if (res.ok) {
-            showToast("Your order has been sent to the kitchen!", "success");
-            if (btn) startButtonCooldown(btn, ORDER_COOLDOWN_SECONDS, "Send Order to Kitchen");
+            showToast("Заказ успешно отправлен на кухню!", "success");
+            if (btn) startButtonCooldown(btn, ORDER_COOLDOWN_SECONDS, "Отправить заказ на кухню");
             cart = [];
             updateCartUI();
             toggleCartModal();
         } else {
-            showToast("Failed to send the order.", "error");
+            showToast("Не удалось отправить заказ.", "error");
         }
     } catch (e) {
-        showToast("Connection error! Please check your internet.", "error");
+        showToast("Ошибка соединения! Проверьте интернет.", "error");
     }
 }
 </script>
     
-<!-- ქვედა ფიქსირებული ზოლი: კალათა და ოფიციანტის ღილაკი -->
+<!-- Нижняя закреплённая панель: корзина и вызов официанта -->
 <div class="bottom-action-bar">
     <button class="call-waiter-btn" onclick="callWaiter()">
-        🔔 Call Waiter
+        🔔 Позвать официанта
     </button>
     
     <button class="cart-btn" onclick="toggleCartModal()">
-        🛒 Cart (<span id="cart-count">0</span>) - <span id="cart-total">0</span> GEL
+        🛒 Корзина (<span id="cart-count">0</span>) - <span id="cart-total">0</span> GEL
     </button>
 </div>
 
-<!-- კალათის MODAL (ფანჯარა) -->
+<!-- Модальное окно корзины -->
 <div id="cart-modal" class="cart-modal">
     <div class="cart-content">
         <div class="cart-header">
-            <h3>Your Order</h3>
+            <h3>Ваш заказ</h3>
             <span class="close-cart" onclick="toggleCartModal()">&times;</span>
         </div>
         <div id="cart-items-list">
-            <!-- არჩეული კერძები დინამიურად ჩაჯდება აქ -->
+            <!-- Выбранные блюда будут добавлены динамически -->
         </div>
         <div class="cart-footer">
-            <h4>Total: <span id="modal-cart-total">0</span> GEL</h4>
-            <button class="send-order-btn" onclick="sendOrder()">Send Order to Kitchen</button>
+            <h4>Итого: <span id="modal-cart-total">0</span> GEL</h4>
+            <button class="send-order-btn" onclick="sendOrder()">Отправить заказ на кухню</button>
         </div>
     </div>
 </div>
